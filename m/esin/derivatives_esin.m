@@ -1,11 +1,13 @@
-function [dydA, dydt0, dydw, dydxc] = derivatives_esin(x, ampl, t0, w, xc)
+function [dydA, dydB, dydC, dydt0, dydw] = derivatives_esin(x, amplA, amplB, amplC, t0, w)
 
 % y = ampl .* exp(-x / t0) .* sin(w .* (x - xc));
 
-dydA = exp(-x/t0).*sin(w.*(x - xc));
+dydA = exp(-x / t0) .* (amplC .* cos(w .* x) + amplB .* sin(w .* x));
+
+dydB = amplA .* exp(-x / t0) .* sin(w .* x);
+  
+dydC = amplA .* exp(-x / t0) .* cos(w .* x);
  
-dydt0 = (ampl.*x.*exp(-x/t0).*sin(w.*(x - xc)))/t0^2;
+dydt0 = (amplA .* x .* exp(-x / t0) .* (amplC .* cos(w .* x) + amplB .* sin(w .* x))) / t0^2;
  
-dydw = ampl.*exp(-x/t0).*cos(w.*(x - xc)).*(x - xc);
- 
-dydxc = -ampl.*w.*exp(-x/t0).*cos(w.*(x - xc));
+dydw = amplA .* exp(-x / t0) .* (amplB .* x .* cos(w .* x) - amplC .* x .* sin(w .* x));

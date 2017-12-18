@@ -1,11 +1,11 @@
-function [dydy0, dydA, dydw, dydxc] = derivatives_sin(x, ampl, w, xc)
+function [dydA, dydw, dydxc] = derivatives_sin(x, ampl, w, xc)
 
 N = size(x, 2);
 
 dydx = ampl .* w .* cos(w .* (x - xc));
 
 % dydy0 = 1;
-dydy0 = ones(1, N);
+% dydy0 = ones(1, N);
  
 dydA = sin(w .* (x - xc));
 
