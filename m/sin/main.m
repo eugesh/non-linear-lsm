@@ -1,10 +1,11 @@
 %% Define parameters. They must match with solution.
 % y = y0 + ampl .* sin(w .* (x - xc));
-ampl_0 = 10; w_0 = 6; xc_0 = 1;
+ampl_0 = 10; w_0 = 600; xc_0 = 0;
 nparams = 3;
 
 %% Create testing set. 
-x = 0 : 0.001 : 10;
+Fs = 1000;
+x = 0 : 1 / Fs : 10;
 y = test_sample_creator_sin(x, ampl_0, w_0, xc_0);
 
 %% Solve nonlinear problem.
@@ -16,19 +17,25 @@ ampl = max(y); w = 0; xc = 1;
 
 % Frequency has to be estimated in advance.
 L = length(y);
-Fs = L;
-NFFT = 2 ^ nextpow2(L); % Next power of 2 from length of y
-Y = fft(y, NFFT) / L;
-f = Fs / 2 * linspace(0, 1, NFFT / 2 + 1);
+% % Fs = L;
+% NFFT = 2 ^ nextpow2(L); % Next power of 2 from length of y
+% Y = fft(y, NFFT) / L;
+% f = Fs / 2 * linspace(0, 1, NFFT / 2 + 1);
+% 
+% % Plot single-sided amplitude spectrum.
+% figure, plot(f, 2 * abs(Y(1 : NFFT / 2 + 1)))
+% title('Single-Sided Amplitude Spectrum of y(t)')
+% xlabel('Frequency (Hz)')
+% ylabel('|Y(f)|')
+% [max_val, sample_res] = max(abs(Y));
+% f_res = (sample_res-1) * Fs / L;
+% w_max = 2 * pi * f_res / max(x);
+% w = w_max;
 
-% Plot single-sided amplitude spectrum.
-figure, plot(f, 2 * abs(Y(1 : NFFT / 2 + 1)))
-title('Single-Sided Amplitude Spectrum of y(t)')
-xlabel('Frequency (Hz)')
-ylabel('|Y(f)|')
-[max_val, f_res] = max(abs(Y));
-w_max = 2 * pi * f_res / max(x);
-w = w_max;
+[maxValue, indexMax] = max(abs(fft(y)));
+f_res2 = (indexMax - 1) * Fs / L;
+w_max2 = 2 * pi * f_res2;
+w = w_max2;
 
 % Approximation loop
 stop = 0;
@@ -61,3 +68,7 @@ while stop == 0 && i < N_iter
 end
 
 y_s = test_sample_creator_sin(x, ampl, w, xc);
+
+figure, plot(y)
+hold on
+plot(y_s, 'r')

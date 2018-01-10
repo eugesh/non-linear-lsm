@@ -18,8 +18,8 @@ eps_stop = 0.1;
 % Initial seeking coefficients values.
 % Estimate amplitude.
 amplA = max(y);
-amplB = max(y);
-amplC = max(y);
+amplB = amplA;
+amplC = amplA;
 % Estimate attenuation t0.
 N = length(y);
 Abegin = amplA;
@@ -43,6 +43,8 @@ ylabel('|Y(f)|')
 [max_val, f_res] = max(abs(Y));
 w_max = 2 * pi * f_res / max(x);
 w = w_max;
+w = 10;
+t0 = 10;
 
 % Approximation loop
 stop = 0;
@@ -59,7 +61,8 @@ while stop == 0 && i < N_iter
     AE = A * A';
     BE = A * B';
     % Linear LSM.
-    corrs = (AE + al * eye(nparams) ) \ BE;
+    %     corrs = (AE + al * eye(nparams) ) \ BE;
+    corrs = (AE + al .* diag(diag(AE))) \ BE;
     % corrs = lsqlin(A', B);
     
     % Solution vector correction.
